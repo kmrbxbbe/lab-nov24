@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shopping List</title>
+  <style>
+    body {
+      background: floralwhite;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    .shopping-total {
+      color: chartreuse;
+      font-size: 1.5em;
+      font-weight: bold;
+    }
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    .form-add {
+      background: pink;
+      padding: 20px;
+      border-radius: 8px;
+    }
+    button {
+      background: orange;
+      border: none;
+      padding: 10px 20px;
+      color: white;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .item-list {
+      margin-top: 20px;
+    }
+    .item {
+      background: lightyellow;
+      border: 1px solid orange;
+      margin-bottom: 10px;
+      padding: 10px;
+      border-radius: 5px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Shopping List</h1>
+
+    <!-- Total Amount Display -->
+    <div id="total" class="shopping-total">Total: $0.00</div>
+
+    <div class="form-add">
+      <form action="/items/add" method="post">
+        <input type="text" name="name" placeholder="Item Name" required>
+        <input type="number" step="0.01" name="price" placeholder="Price" required>
+        <button type="submit">Add Item</button>
+      </form>
+    </div>
+
+    <div id="items" class="item-list"></div>
+
+    <script>
+      async function getItems() {
+        const response = await fetch('/items/list');
+        const items = await response.json();
+        const itemsList = document.getElementById('items');
+        itemsList.innerHTML = items.map(item => `<div class="item"><p>${item.name}: $${item.price}</p></div>`).join('');
+
+        // Get and display total
+        const totalResponse = await fetch('/items/total');
+        const totalResult = await totalResponse.json();
+        document.getElementById('total').textContent = `Total: $${totalResult.total}`;
+      }
+      getItems();
+    </script>
+  </body>
+</html>
